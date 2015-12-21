@@ -1,0 +1,2 @@
+# Tibetan
+Python 2.7 scripts for processing Tibetan language, and necessary data. I've developped these as help functions for current bigger project, but I want to make it public in case someone else may use or test it. It has worked just fine for my needs, my data and my system, but may have errors in other circomstances. If you use my modules and find any errors or lack of important features - feel free to write me. 
