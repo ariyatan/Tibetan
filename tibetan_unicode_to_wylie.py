@@ -108,6 +108,8 @@ def tibetan(transliteration):
             transliteration_dict[key] = line[0].decode('unicode-escape')
         transliteration_dict[(u'_', str(1))] = u'\xa0'
         transliteration_dict[(u'.y', str(1))] = u'\u0f61'
+        transliteration_dict[(u'.r', str(1))] = u'\u0f62'
+        transliteration_dict[(u'.l', str(1))] = u'\u0f63'
 
     def return_seq(source):
         u_source = source.encode('utf-8')
@@ -156,6 +158,10 @@ def tibetan(transliteration):
                             initial[-1] = 'dz'
                         elif item == 'y' and initial[-1] == '.':
                             initial[-1] = '.y'
+                        elif item == 'r' and initial[-1] == '.':
+                            initial[-1] = '.r'
+                        elif item == 'l' and initial[-1] == '.':
+                            initial[-1] = '.l'
                         elif item == 'g' and initial[-1] == 'n':
                             initial[-1] = 'ng'
                         else:
@@ -180,11 +186,9 @@ def tibetan(transliteration):
                     tib_syllable.append(transliteration_dict[(item, str(1))])
                 elif item in['|', '/']:
                     tib_syllable.append(u'། ')
-                elif item == 'r' and len(initial) > initial.index(item) + 1 and initial[initial.index(item) + 1] in ['g', 'ts', 'tsh']:
-                    tib_syllable.append(u'\u0f62')
                 elif initial.index(item) > 0 and initial[initial.index(item) - 1] in ['r', 'l', 's']:
                     tib_syllable.append(transliteration_dict[(item, str(3))])
-                elif item in ['r', 'y', 'w', 'sh', "'"] and initial.index(item) == len(initial) - 1:
+                elif item in ['r', 'l', 'y', 'w', 'sh', "'"] and initial.index(item) == len(initial) - 1:
                     tib_syllable.append(transliteration_dict[(item, str(4))])
                 else:
                     tib_syllable.append(transliteration_dict[(item, str(1))])
