@@ -188,7 +188,13 @@ def tibetan(transliteration):
                     tib_syllable.append(u'། ')
                 elif initial.index(item) > 0 and initial[initial.index(item) - 1] in ['r', 'l', 's']:
                     tib_syllable.append(transliteration_dict[(item, str(3))])
-                elif item in ['r', 'l', 'y', 'w', 'sh', "'"] and initial.index(item) == len(initial) - 1:
+                elif item == 'l' and initial.index(item) == len(initial) - 1 and initial[-2] in ['k', 'g', 'b', 'z','r', 's']:
+                    tib_syllable.append(u'\u0fb3')
+                elif item == 'y' and initial.index(item) == len(initial) - 1 and initial[-2] in ['k', 'g', 'kh', 'p','ph', 'b', 'm', 'h']:
+                     tib_syllable.append(u'\u0fb1')
+                elif item == 'r' and initial.index(item) == len(initial) - 1 and initial[-2] in ['k', 'g', 'kh', 't', 'th', 'd', 'n', 'p','ph', 'b', 'm', 's','h']:
+                     tib_syllable.append(u'\u0fb2')
+                elif item in ['w', "'"] and initial.index(item) == len(initial) - 1:
                     tib_syllable.append(transliteration_dict[(item, str(4))])
                 else:
                     tib_syllable.append(transliteration_dict[(item, str(1))])
