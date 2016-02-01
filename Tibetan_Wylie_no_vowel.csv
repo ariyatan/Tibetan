@@ -1,3 +1,4 @@
+\u0f00,OM,1
 \u0f04,@,1
 \u0f05,#,1
 \u0f06,$,1
@@ -5,7 +6,8 @@
 \u0f08,!,1
 \u0f0b, ,1
 \u0f0c,*,1
-\u0f0d,|,1
+\u0f0d,/,1
+\u0f0e,//,1
 \u0f0f,;,1
 \u0f11,|,1
 \u0f14,:,1
@@ -70,7 +72,7 @@
 \u0f6a,R+,2
 \u0f6b,K,1
 \u0f6c,R,1
-\u0f71,',4
+\u0f71,A,5
 \u0f72,i,5
 \u0f73,I,5
 \u0f74,u,5
@@ -83,12 +85,12 @@
 \u0f7b,ai,5
 \u0f7c,o,5
 \u0f7d,au,5
-\u0f7e,M,
+\u0f7e,M,5
 \u0f7f,H,1
 \u0f80,-i,5
-\u0f82,~M',
-\u0f83,~M,
-\u0f84,?,
+\u0f82,~M',5
+\u0f83,~M,5
+\u0f84,?,5
 \u0f85,&,1
 \u0f90,k,3
 \u0f91,kh,3
@@ -118,17 +120,14 @@
 \u0faa,tsh,3
 \u0fab,dz,3
 \u0fac,dz+h,3
-\u0fad,w,4
+\u0fad,w,3
 \u0fae,zh,3
 \u0faf,z,3
-\u0fb0,',4
-\u0fb1,y,4
+\u0fb0,',3
 \u0fb1,y,3
-\u0fb2,r,4
 \u0fb2,r,3
-\u0fb3,l,4
 \u0fb3,l,3
-\u0fb4,sh,4
+\u0fb4,sh,3
 \u0fb5,Sh,3
 \u0fb6,s,3
 \u0fb7,h,3
