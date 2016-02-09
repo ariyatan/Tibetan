@@ -161,10 +161,25 @@ def wylie_to_tibetan(transliteration):
                 (u'U', str(5)): u'\u0f71\u0f74',
                 (u'.a', str(1)): u'\u0f68',
                 (u'f', str(1)): u'ཕ༹',
-                (u'v', str(1)): u'\u0f56\u0f39'}
+                (u'v', str(1)): u'\u0f56\u0f39',
+                (u'a', str(5)): '',
+                (u'r-i', str(5)):u'\u0fb2\u0f80',
+                (u'l-i', str(5)): u'\u0fb3\u0f80',
+                (u'r-I', str(5)):u'\u0fb2\u0f71\u0f80',
+                (u'l-I', str(5)): u'\u0fb3\u0f71\u0f80',}
         transliteration_dict.update(extra)
 
     tr_keys = transliteration_dict.keys()
+
+    compound = {('/', '/'): '//', ('k','h'): 'kh', ('p','h'): 'ph', ('c','h'): 'ch', ('n','g'): 'ng',
+                ('t', 'h'): 'th', ('ts', 'h'): 'tsh', ('z', 'h'):'zh', ('s', 'h'): 'sh',
+                ('S', 'h'): 'Sh', ('T', 'h'): 'Th', ('.', 'y'): '.y',
+                ('.', 'l'): '.l', ('.', 'r'): '.r', ('t', 's'): 'ts', ('n', 'y'): 'ny',
+                ('a', 'i'): 'ai', ('a', 'u'): 'au', ('l-', 'i'): 'l-i' , ('r-', 'i'): 'r-i',
+                ('l-', 'I'): 'l-I' , ('r-', 'I'): 'r-I' , ('.', 'a'): '.a', ('r', '-'): 'r-', ('l', '-'): 'l-',
+                ('~', 'M'): '~M', ("'", '~M'): '~M', ('-', 'i'): '-i', ('d', 'z'): 'dz'}
+
+    vowels = frozenset(['a', 'u', 'i', 'o',  'e', 'I', 'U', 'au', 'A', 'ai', 'M', "~M'", '~M', '?', 'r-i', 'l-i', 'r-I', 'l-I'])
 
     def return_seq(source):
         u_source = source.encode('utf-8')
@@ -186,121 +201,80 @@ def wylie_to_tibetan(transliteration):
     bod_skad = []
     for seq in return_seq(transliteration):
         tib_syllable = [] #tibetan unicode
-        initial = [] #transliteration, everything before first vowel is added here
-        final = [] #transliteration: vowel and closing consonants if any
+        initial = [] #transliteration
         index = 0
-        to_write = 'initial'
 
         for item in seq:
-            #parse transliteration:
-            #distinguish initial and final parts of syllable, join compound codes
-            if item in ['a', 'u', 'i', 'o',  'e', 'I', 'U', 'au', 'A', 'ai', 'M', "~M'", '~M', '?'] and to_write == 'initial':
-                if index == 0:
-                    tib_syllable.append(u'\u0f68')
-                    to_write = 'final'
-                    if item == 'a':
-                        pass
+            #parse transliteration, join compound codes
+            if index == 0:
+                initial.append(item)
 
-                    else:
-                        final.append(item)
-                else:
-                    to_write = 'final'
-                    final.append(item)
-
-            else:
-                if to_write == 'initial':
-                    if len(initial) > 0:
-                        if initial[-1] == '+':
-                            initial[-1] = ''.join(['+', item])
-                        elif item == '-':
-                            v = initial.pop(-1)
-                            final.append(''.join([v, '-']))
-                            to_write = 'final'
-                        elif item == '/' and initial[-1] == '/':
-                            initial[-1] = '//'
-                        else:
-                            symbols = {('/', '/'): '//', ('k','h'): 'kh', ('p','h'): 'ph', ('c','h'): 'ch',
-                                       ('n','g'): 'ng', ('t', 'h'): 'th', ('ts', 'h'): 'tsh', ('z', 'h'):'zh',
-                                       ('s', 'h'): 'sh', ('S', 'h'): 'Sh', ('+S', 'h'): '+Sh', ('T', 'h'): 'Th',
-                                       ('.', 'y'): '.y', ('.', 'l'): '.l', ('.', 'r'): '.r', ('t', 's'): 'ts', ('n', 'y'): 'ny'}
-                            key = (initial[-1], item)
-                            try:
-                                initial[-1] = symbols[key]
-                            except KeyError:
-                                initial.append(item)
-                    else:
-                        initial.append(item)
-                else:
-                    if len(final) >= 1:
-                        compound = {('/', '/'): '//', ('k','h'): 'kh', ('p','h'): 'ph', ('c','h'): 'ch', ('n','g'): 'ng',
-                                    ('t', 'h'): 'th', ('ts', 'h'): 'tsh', ('z', 'h'):'zh', ('s', 'h'): 'sh',
-                                    ('S', 'h'): 'Sh', ('+S', 'h'): '+Sh', ('T', 'h'): 'Th', ('.', 'y'): '.y',
-                                    ('.', 'l'): '.l', ('.', 'r'): '.r', ('t', 's'): 'ts', ('n', 'y'): 'ny',
-                            ('a', 'i'): 'ai', ('a', 'u'): 'au', ('l-', 'i'): 'l-i' , ('r-', 'i'): 'r-i',
-                            ('l-', 'I'): 'l-I' , ('r-', 'I'): 'r-I' , ('.', 'a'): '.a', ('-', 'r'): '-r', ('-', 'l'): '-l',
-                            ('~', 'M'): '~M', ("'", '~M'): '~M'}
-                        compound_keys = compound.keys()
-                        key = (final[-1], item)
-                        try:
-                            final[-1] = compound[key]
-                        except KeyError:
-                            if final[-1] == '+':
-                                final[-1] = ''.join(['+', item])
-                            else:
-                                final.append(item)
-                    else:
-                        final.append(item)
+            elif len(initial) > 0:
+                key = (initial[-1], item)
+                try:
+                    initial[-1] = compound[key]
+                except KeyError:
+                    initial.append(item)
             index += 1
 
+        ind = 0
         if len(initial) == 1 and (initial[0], str(1)) in tr_keys:
             tib_syllable.append(transliteration_dict[(initial[0], str(1))])
         else:
             for item in initial:
-                ind = initial.index(item)
-                root_length = len(initial)
+
                 if item == ' ':
-                    if tib_syllable[-1] in [u'\u0f04', u'\u0f05', u'\u0f06', u'\u0f07', u'\u0f08', u'\u0f0b', u'\u0f0c', u'\u0f0d', u'\u0f0e', u'\u0f0f', u'\u0f11', u'\u0f14']:
+                    if tib_syllable[-1] in frozenset([u'\u0f04', u'\u0f05', u'\u0f06', u'\u0f07', u'\u0f08', u'\u0f0b', u'\u0f0c', u'\u0f0d', u'\u0f0e', u'\u0f0f', u'\u0f11', u'\u0f14']):
                         tib_syllable.append(u' ')
                     else:
                         tib_syllable.append(u'\u0f0b')
+                elif item in vowels:
+                    if ind == 0:
+                        tib_syllable.append(u'\u0f68')
+                        tib_syllable.append(transliteration_dict[(item, str(5))])
+                    else:
+                        tib_syllable.append(transliteration_dict[(item, str(5))])
                 elif item in ['b', "'", 'd', 'm', 'g'] and ind == 0:
                     tib_syllable.append(transliteration_dict[(item, str(1))])
-                elif item[0] == '+':
-                    tib_syllable.append(transliteration_dict[(item[1:], str(3))])
+                elif item == '+':
+                    tib_syllable.append(item)
                 elif ind > 0 and initial[ind - 1] in ['r', 'l', 's']:
-                    tib_syllable.append(transliteration_dict[(item, str(3))])
-                elif item == 'l' and ind == root_length - 1 and ind >=1 and initial[ind-1] in ['k', 'g', 'b', 'z','r', 's']:
-                    tib_syllable.append(u'\u0fb3')
-                elif item == 'y' and (ind == root_length - 1 or (ind == root_length - 2 and initial[-1] == 'w')) and ind >=1 and initial[ind-1] in ['k', 'g', 'kh', 'p', 'ph', 'b', 'm', 'h']:
-                     tib_syllable.append(u'\u0fb1')
-                elif item == 'r' and (ind == root_length - 1 or (ind == root_length - 2 and initial[-1]in  ['y', 'w'])) and ind >=1 and initial[ind-1] in ['k', 'g', 'kh', 't', 'th', 'd', 'n', 'p','ph', 'b', 'm', 's','h']:
-                     tib_syllable.append(u'\u0fb2')
-                elif item in ['w', "'"] and ind > 0 and ind == root_length - 1:
-                    tib_syllable.append(transliteration_dict[(item, str(3))])
-                else:
-                    key = (item, str(1))
-                    if key in tr_keys:
-                        tib_syllable.append(transliteration_dict[key])
+                    if item in ['s', 'd']:
+                        if initial[-1] == ' ' and ind == len(initial) - 2:
+                            #second affix
+                            tib_syllable.append(transliteration_dict[(item, str(1))])
+                        elif ind == len(initial) - 1:
+                            #second affix
+                            tib_syllable.append(transliteration_dict[(item, str(1))])
+                        else:
+                            tib_syllable.append(transliteration_dict[(item, str(3))])
                     else:
-                        tib_syllable.append(item)
+                        tib_syllable.append(transliteration_dict[(item, str(3))])
+                elif item == 'l' and ind > 0 and initial[ind-1] in ['k', 'g', 'b', 'z','r', 's'] and initial[ind + 1] in vowels:
+                    tib_syllable.append(u'\u0fb3')
+                elif item == 'y' and ind > 0 and initial[ind-1] in ['k', 'g', 'kh', 'p', 'ph', 'b', 'm', 'h'] and initial[ind + 1] in vowels:
+                     tib_syllable.append(u'\u0fb1')
+                elif item == 'r' and ind > 0 and initial[ind-1] in ['k', 'g', 'kh', 't', 'th', 'd', 'n', 'p','ph', 'b', 'm', 's','h'] and (initial[ind + 1] in vowels or initial[ind + 1] == 'w'):
+                     tib_syllable.append(u'\u0fb2')
+                elif item =='w' and ind > 0 and initial[ind - 1] not in vowels:
+                    tib_syllable.append(u'\u0fad')
+                    if tib_syllable[-2] == '+':
+                        tib_syllable.remove('+')
 
-        for item in final:
-            if item in ['u', 'i', 'o',  'e', 'I', 'U', 'au', 'A', 'ai', 'M', "~M'", '~M', '?', 'r-i', 'l-i', 'r-I', 'l-I']:
-                tib_syllable.append(transliteration_dict[(item, str(5))])
-            elif item == 'a':
-                pass
-            elif item[0] == '+':
-                    tib_syllable.append(transliteration_dict[(item[1:], str(3))])
-            else:
-                tib_syllable.append(transliteration_dict[(item, str(1))])
+                else:
+                    if ind > 1 and tib_syllable[-1] == '+':
+                        tib_syllable.pop()
+                        tib_syllable.append(transliteration_dict[(item, str(3))])
+                    else:
+                        key = (item, str(1))
+                        if key in tr_keys:
+                            tib_syllable.append(transliteration_dict[key])
+                        else:
+                            tib_syllable.append(item)
+                ind += 1
+
 
         bod_skad.append(''.join(tib_syllable))
 
     return ''.join(bod_skad) #uncomment to return string
     #return bod_skad   #uncomment to return list
-
-
-
-
-
-
